@@ -1,0 +1,11 @@
+spring:
+  profiles: default,development,test,docker,kubernetes
+  application:
+    name: wiki-ingest-service
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true
+---

@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    active: kubernetes
+  application:
+    name: wiki-ingest-service
+  cloud:
+    stream:
+      bindings:
+        output:
+          binder: kafka
+          destination: wiki-recent-change
+          contentType: 'application/json'
+          group: wiki-group
+          producer:
+            requiredGroups: wiki-group
+server:
+  port: ${PORT:${SERVER_PORT:8100}}
+---
+spring:
+  profiles: development
+---
+spring:
+  profiles: docker
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: kafka
+---
+spring:
+  profiles: kubernetes
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: "PLAINTEXT://kafka:9092"
+---
+spring:
+  profiles: test
