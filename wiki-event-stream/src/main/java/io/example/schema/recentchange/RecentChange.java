@@ -98,6 +98,12 @@ public class RecentChange {
     @JsonPropertyDescription("The rc_comment parsed into simple HTML. Optional")
     private String parsedcomment;
     /**
+     * The categories parsed into a comma separated list of values
+     */
+    @JsonProperty("category")
+    @JsonPropertyDescription("The rc_comment parsed into simple HTML. Optional")
+    private String category;
+    /**
      * Unix timestamp (derived from rc_timestamp).
      */
     @JsonProperty("timestamp")
@@ -420,6 +426,16 @@ public class RecentChange {
         this.serverScriptPath = serverScriptPath;
     }
 
+    @JsonProperty("category")
+    public String getCategory() {
+        return category;
+    }
+
+    @JsonProperty("category")
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     /**
      * wfWikiID ($wgDBprefix, $wgDBname)
      */
@@ -595,6 +611,7 @@ public class RecentChange {
                 ", namespace=" + namespace +
                 ", comment='" + comment + '\'' +
                 ", parsedcomment='" + parsedcomment + '\'' +
+                ", category='" + category + '\'' +
                 ", timestamp=" + timestamp +
                 ", user='" + user + '\'' +
                 ", bot=" + bot +

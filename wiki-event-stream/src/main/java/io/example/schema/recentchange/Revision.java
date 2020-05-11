@@ -80,4 +80,12 @@ public class Revision {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString() {
+        return "Revision{" +
+                "_new=" + _new +
+                ", old=" + old +
+                ", additionalProperties=" + additionalProperties +
+                '}';
+    }
 }

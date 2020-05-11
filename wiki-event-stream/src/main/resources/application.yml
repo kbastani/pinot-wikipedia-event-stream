@@ -18,6 +18,11 @@ server:
 ---
 spring:
   profiles: development
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: "PLAINTEXT://localhost:29092"
 ---
 spring:
   profiles: docker
@@ -25,7 +30,7 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: kafka
+          brokers: "PLAINTEXT://kafka:29092"
 ---
 spring:
   profiles: kubernetes

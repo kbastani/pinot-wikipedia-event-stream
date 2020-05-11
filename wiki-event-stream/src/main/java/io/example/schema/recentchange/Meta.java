@@ -178,4 +178,16 @@ public class Meta {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString() {
+        return "Meta{" +
+                "uri='" + uri + '\'' +
+                ", requestId='" + requestId + '\'' +
+                ", id='" + id + '\'' +
+                ", dt=" + dt +
+                ", domain='" + domain + '\'' +
+                ", stream='" + stream + '\'' +
+                ", additionalProperties=" + additionalProperties +
+                '}';
+    }
 }

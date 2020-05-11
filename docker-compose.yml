@@ -12,7 +12,6 @@ services:
       - "29092:29092/tcp"
     deploy:
       replicas: 1
-
   zookeeper:
     environment:
       ZOOKEEPER_CLIENT_PORT: 32181
@@ -22,3 +21,15 @@ services:
       - "32181:32181/tcp"
     deploy:
       replicas: 1
+  wiki-event-stream:
+    image: kbastani2/wiki-event-stream-service:0.0.2-SNAPSHOT
+    ports:
+      - "8100:8100/tcp"
+#  db:
+#    image: mysql
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    ports:
+#      - "3306:3306/tcp"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: example
