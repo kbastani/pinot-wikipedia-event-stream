@@ -1,0 +1,50 @@
+{
+  "tableName": "wikiRecentChangeTable",
+  "tableType": "REALTIME",
+  "segmentsConfig": {
+    "timeColumnName": "timestamp",
+    "timeType": "MILLISECONDS",
+    "schemaName": "wikiRecentChangeSchema",
+    "replicasPerPartition": "1"
+  },
+  "tenants": {},
+  "fieldConfigList":[
+    {
+      "name":"title",
+      "encodingType":"RAW",
+      "indexType":"TEXT"
+    },
+    {
+      "name":"category",
+      "encodingType":"RAW",
+      "indexType":"TEXT"
+    },
+    {
+      "name":"parsedcomment",
+      "encodingType":"RAW",
+      "indexType":"TEXT"
+    }
+  ],
+  "tableIndexConfig": {
+    "noDictionaryColumns": [
+      "title",
+      "parsedcomment",
+      "category"
+    ],
+    "loadMode": "MMAP",
+    "streamConfigs": {
+      "streamType": "kafka",
+      "stream.kafka.consumer.type": "simple",
+      "stream.kafka.topic.name": "wiki-recent-change",
+      "stream.kafka.decoder.class.name": "org.apache.pinot.plugin.stream.kafka.KafkaJSONMessageDecoder",
+      "stream.kafka.consumer.factory.class.name": "org.apache.pinot.plugin.stream.kafka20.KafkaConsumerFactory",
+      "stream.kafka.broker.list": "PLAINTEXT://kafka:9092",
+      "realtime.segment.flush.threshold.time": "12h",
+      "realtime.segment.flush.threshold.size": "100000",
+      "stream.kafka.consumer.prop.auto.offset.reset": "smallest"
+    }
+  },
+  "metadata": {
+    "customConfigs": {}
+  }
+}

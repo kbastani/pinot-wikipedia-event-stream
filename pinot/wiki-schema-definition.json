@@ -1,0 +1,59 @@
+{
+  "schemaName": "wikiRecentChangeSchema",
+  "dimensionFieldSpecs": [
+    {
+      "name": "title",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "type",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "comment",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "parsedcomment",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "category",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "user",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "server_url",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "server_name",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "wiki",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    }
+  ],
+  "metricFieldSpecs": [
+  ],
+  "timeFieldSpec": {
+    "incomingGranularitySpec": {
+      "timeType": "MILLISECONDS",
+      "dataType": "LONG",
+      "name": "timestamp"
+    }
+  }
+}
