@@ -4,6 +4,8 @@ This is a collection of server-sent-event (SSE) replicators that ingest real-tim
 
 ![Superset Pinot Charts](https://i.imgur.com/py4mllo.png)
 
+![Superset Pinot Charts](https://i.imgur.com/tjcIr7a.png)
+
 ## Usage
 
 The best way to use this example is to deploy it to a Kubernetes cluster that has Kafka installed. Start by compiling the application with Docker running.
