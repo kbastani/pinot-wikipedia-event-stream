@@ -18,11 +18,10 @@ First, you need to copy the JSON schema and table definition to the Pinot contai
 
 After the JSON files are copied to the Pinot container, you can create the schema and table.
 
-    docker exec pinot-wikipedia-event-stream_pinot_1 bin/pinot-admin.sh AddTable \ 
-        -controllerHost localhost \
-        -tableConfigFile /pinot/wiki-table-definition.json \
-        -schemaFile /pinot/wiki-schema-definition.json \
-        -exec
+    docker exec pinot-wikipedia-event-stream_pinot_1 bin/pinot-admin.sh AddTable \
+      -tableConfigFile /pinot/wiki-table-definition.json \
+      -schemaFile /pinot/wiki-schema-definition.json \
+      -exec
 
 After creating the schema and table, you can start querying the real-time change feed from Wikipedia.
 
