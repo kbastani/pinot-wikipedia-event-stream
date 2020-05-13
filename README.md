@@ -4,16 +4,6 @@ This is a collection of server-sent-event (SSE) replicators that ingest real-tim
 
 ![Superset Pinot Charts](https://i.imgur.com/py4mllo.png)
 
-## Build
-
-The best way to use this example is to deploy it to a Kubernetes cluster that has Kafka installed. Start by compiling the application with Docker running.
-
-    mvn clean install -DskipTests
-
-This will build a docker image. You can modify the DockerHub user that this image will be associated with in the Maven BOM of the parent project, located here:
-
-https://github.com/kbastani/pinot-wikipedia-event-stream/blob/c77b404b9dedf120f09fc1abb59d0033f78022a5/pom.xml#L25
-
 ## Run
 
 You can run the example using Docker compose using the supplied `docker-compose.yml` file. This will ingest events from Wikipedia to a new Kafka cluster.
@@ -95,3 +85,13 @@ Please visit the Apache Pinot documentation to learn how to easily setup a quick
 [Running Pinot in Kubernetes](https://docs.pinot.apache.org/getting-started/kubernetes-quickstart)
 
 By following this guide you'll have a functioning Kubernetes cluster that you can deploy the `wiki-event-stream` replicator to. The replicator will continuously subscribe to events published by the Wikimedia event stream APIs, and will durably retry with backoffs in the case of a failure.
+
+## Build
+
+The best way to use this example is to deploy it to a Kubernetes cluster that has Kafka installed. Start by compiling the application with Docker running.
+
+    mvn clean install -DskipTests
+
+This will build a docker image. You can modify the DockerHub user that this image will be associated with in the Maven BOM of the parent project, located here:
+
+https://github.com/kbastani/pinot-wikipedia-event-stream/blob/c77b404b9dedf120f09fc1abb59d0033f78022a5/pom.xml#L25
