@@ -23,13 +23,7 @@ services:
       replicas: 1
   wiki-event-stream:
     image: kbastani2/wiki-event-stream-service:0.0.2-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8100:8100/tcp"
-#  db:
-#    image: mysql
-#    command: --default-authentication-plugin=mysql_native_password
-#    restart: always
-#    ports:
-#      - "3306:3306/tcp"
-#    environment:
-#      MYSQL_ROOT_PASSWORD: example
