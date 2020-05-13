@@ -21,6 +21,12 @@ services:
       - "32181:32181/tcp"
     deploy:
       replicas: 1
+  pinot:
+    image: apachepinot/pinot:latest
+    command: "QuickStart -type stream"
+    ports:
+      - "9000:9000/tcp"
+
   wiki-event-stream:
     image: kbastani2/wiki-event-stream-service:0.0.2-SNAPSHOT
     environment:
