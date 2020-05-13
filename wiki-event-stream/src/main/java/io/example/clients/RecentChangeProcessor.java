@@ -18,6 +18,11 @@ import reactor.core.publisher.FluxSink;
 
 import java.time.Duration;
 
+/**
+ * This processor receives Wikimedia change events that describe recent changes as they are happening live on Wikipedia.
+ *
+ * @author Kenny Bastani
+ */
 @Component
 public class RecentChangeProcessor {
     private static Logger logger = LoggerFactory.getLogger(RecentChangeProcessor.class);
@@ -121,9 +126,9 @@ public class RecentChangeProcessor {
             logger.info("Processing wiki change event: " + recentChange.toString());
             messageBroker.output().send(MessageBuilder.withPayload(recentChange).build());
         } catch (Exception ex) {
+            logger.error("Error processing wiki change event", ex);
             throw new RuntimeException(ex);
         }
-        logger.trace(recentChange.toString());
 
         if (!running)
             throw new RuntimeException("The wiki stream replicator was stopped");
