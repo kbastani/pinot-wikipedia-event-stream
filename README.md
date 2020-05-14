@@ -77,9 +77,41 @@ You should see something similar to the following output.
     Category:Virus stubs	1
     Category:WikiProject Viruses articles	7
 
+### Visualizing Changes with D3js
+
+Try this query to get back time series data that shows how articles related to the 2020 coronavirus pandemic are changing minute-by-minute.
+
+    SELECT category as name, DISTINCTCOUNT(id) as rank
+    FROM wikiRecentChangeTable
+    WHERE text_match(title, "pandemic")
+    GROUP BY title, dateTimeConvert(changedTime, '1:MILLISECONDS:EPOCH', '1:MINUTES:SIMPLE_DATE_FORMAT:yyyy-MM-dd HH:mm:ss tz(America/Los_Angeles)', '1:MINUTES')
+    TOP 1000
+
+You can download this data as CSV from the Pinot data browser and plug it into a d3js visualization that animates the query results.
+
+https://observablehq.com/@kbastani/coronavirus-wikipedia-article-change-race
+
+To get this to work, you have to make some changes to the CSV.
+
+- Rename the row headers to `name`, `date`, `value`
+- Remove all the double quotes
+- Check for any commas in the page titles
+
+The CSV file should look like the following.
+
+    name,date,value
+    2020 coronavirus pandemic in Africa,2020-04-13T08:58:00,2
+    2020 coronavirus pandemic in Algeria,2020-04-13T08:57:00,1
+    2020 coronavirus pandemic in Assam,2020-04-13T08:58:00,1
+    2020 coronavirus pandemic in Azerbaijan,2020-04-13T08:31:00,1
+    2020 coronavirus pandemic in British Columbia,2020-04-13T09:06:00,1
+    2020 coronavirus pandemic in Bulgaria,2020-04-13T08:47:00,1
+    2020 coronavirus pandemic in Bulgaria,2020-04-13T08:50:00,1
+    2020 coronavirus pandemic in Egypt,2020-04-13T08:38:00,1
+
 ## Running in Kubernetes
 
-Please visit the Apache Pinot documentation to learn how to easily setup a quick start cluster that has Kafka, Zookeeper, Pinot, and Superset.
+Please visit the [Apache Pinot documentation](http://docs.pinot.apache.org) to learn how to easily setup a quick start cluster that has Kafka, Zookeeper, Pinot, and Superset.
 
 [Running Pinot in Kubernetes](https://docs.pinot.apache.org/getting-started/kubernetes-quickstart)
 
