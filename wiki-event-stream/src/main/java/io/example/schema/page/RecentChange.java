@@ -108,7 +108,7 @@ public class RecentChange {
      */
     @JsonProperty("timestamp")
     @JsonPropertyDescription("Unix timestamp (derived from rc_timestamp).")
-    private Integer timestamp;
+    private Long timestamp;
     /**
      * (rc_user_text)
      */
@@ -334,7 +334,7 @@ public class RecentChange {
      * Unix timestamp (derived from rc_timestamp).
      */
     @JsonProperty("timestamp")
-    public Integer getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
@@ -342,7 +342,7 @@ public class RecentChange {
      * Unix timestamp (derived from rc_timestamp).
      */
     @JsonProperty("timestamp")
-    public void setTimestamp(Integer timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
