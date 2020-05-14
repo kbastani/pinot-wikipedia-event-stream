@@ -2,6 +2,31 @@
   "schemaName": "wikiRecentChangeSchema",
   "dimensionFieldSpecs": [
     {
+      "name": "id",
+      "dataType": "INT",
+      "defaultNullValue": 0
+    },
+    {
+      "name": "uri",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "domain",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "dateTime",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
+      "name": "uuid",
+      "dataType": "STRING",
+      "defaultNullValue": ""
+    },
+    {
       "name": "title",
       "dataType": "STRING",
       "defaultNullValue": ""
@@ -17,7 +42,7 @@
       "defaultNullValue": ""
     },
     {
-      "name": "parsedcomment",
+      "name": "parsedComment",
       "dataType": "STRING",
       "defaultNullValue": ""
     },
@@ -32,28 +57,24 @@
       "defaultNullValue": ""
     },
     {
-      "name": "server_url",
-      "dataType": "STRING",
-      "defaultNullValue": ""
-    },
-    {
-      "name": "server_name",
-      "dataType": "STRING",
-      "defaultNullValue": ""
-    },
-    {
       "name": "wiki",
       "dataType": "STRING",
       "defaultNullValue": ""
     }
   ],
   "metricFieldSpecs": [
+    {
+      "name": "changeLength",
+      "dataType": "INT",
+      "defaultNullValue": 0
+    }
   ],
   "timeFieldSpec": {
     "incomingGranularitySpec": {
-      "timeType": "MILLISECONDS",
+      "name": "changedTime",
       "dataType": "LONG",
-      "name": "timestamp"
+      "timeFormat" : "EPOCH",
+      "timeType": "MILLISECONDS"
     }
   }
 }

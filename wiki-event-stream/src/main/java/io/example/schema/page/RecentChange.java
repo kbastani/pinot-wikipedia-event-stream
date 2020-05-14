@@ -1,5 +1,5 @@
 
-package io.example.schema.recentchange;
+package io.example.schema.page;
 
 import java.util.HashMap;
 import java.util.List;
@@ -424,16 +424,6 @@ public class RecentChange {
     @JsonProperty("server_script_path")
     public void setServerScriptPath(String serverScriptPath) {
         this.serverScriptPath = serverScriptPath;
-    }
-
-    @JsonProperty("category")
-    public String getCategory() {
-        return category;
-    }
-
-    @JsonProperty("category")
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     /**

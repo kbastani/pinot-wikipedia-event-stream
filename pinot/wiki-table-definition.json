@@ -2,7 +2,7 @@
   "tableName": "wikiRecentChangeTable",
   "tableType": "REALTIME",
   "segmentsConfig": {
-    "timeColumnName": "timestamp",
+    "timeColumnName": "changedTime",
     "timeType": "MILLISECONDS",
     "schemaName": "wikiRecentChangeSchema",
     "replicasPerPartition": "1"
@@ -20,7 +20,7 @@
       "indexType":"TEXT"
     },
     {
-      "name":"parsedcomment",
+      "name":"parsedComment",
       "encodingType":"RAW",
       "indexType":"TEXT"
     }
@@ -28,7 +28,7 @@
   "tableIndexConfig": {
     "noDictionaryColumns": [
       "title",
-      "parsedcomment",
+      "parsedComment",
       "category"
     ],
     "loadMode": "MMAP",

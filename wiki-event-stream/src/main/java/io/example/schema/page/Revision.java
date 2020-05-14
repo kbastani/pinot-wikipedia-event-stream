@@ -1,5 +1,5 @@
 
-package io.example.schema.recentchange;
+package io.example.schema.page;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,48 +14,32 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * Length of old and new change
+ * Old and new revision IDs
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "old",
-        "new"
+        "new",
+        "old"
 })
-public class Length {
+public class Revision {
 
     /**
-     * (rc_old_len)
-     */
-    @JsonProperty("old")
-    @JsonPropertyDescription("(rc_old_len)")
-    private Integer old;
-    /**
-     * (rc_new_len)
+     * (rc_last_oldid)
      */
     @JsonProperty("new")
-    @JsonPropertyDescription("(rc_new_len)")
+    @JsonPropertyDescription("(rc_last_oldid)")
     private Integer _new;
+    /**
+     * (rc_this_oldid)
+     */
+    @JsonProperty("old")
+    @JsonPropertyDescription("(rc_this_oldid)")
+    private Integer old;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * (rc_old_len)
-     */
-    @JsonProperty("old")
-    public Integer getOld() {
-        return old;
-    }
-
-    /**
-     * (rc_old_len)
-     */
-    @JsonProperty("old")
-    public void setOld(Integer old) {
-        this.old = old;
-    }
-
-    /**
-     * (rc_new_len)
+     * (rc_last_oldid)
      */
     @JsonProperty("new")
     public Integer getNew() {
@@ -63,11 +47,27 @@ public class Length {
     }
 
     /**
-     * (rc_new_len)
+     * (rc_last_oldid)
      */
     @JsonProperty("new")
     public void setNew(Integer _new) {
         this._new = _new;
+    }
+
+    /**
+     * (rc_this_oldid)
+     */
+    @JsonProperty("old")
+    public Integer getOld() {
+        return old;
+    }
+
+    /**
+     * (rc_this_oldid)
+     */
+    @JsonProperty("old")
+    public void setOld(Integer old) {
+        this.old = old;
     }
 
     @JsonAnyGetter
@@ -80,4 +80,12 @@ public class Length {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString() {
+        return "Revision{" +
+                "_new=" + _new +
+                ", old=" + old +
+                ", additionalProperties=" + additionalProperties +
+                '}';
+    }
 }

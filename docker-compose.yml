@@ -26,6 +26,7 @@ services:
     command: "QuickStart -type stream"
     ports:
       - "9000:9000/tcp"
+      - "8000:8000/tcp"
 
   wiki-event-stream:
     image: kbastani2/wiki-event-stream-service:0.0.2-SNAPSHOT

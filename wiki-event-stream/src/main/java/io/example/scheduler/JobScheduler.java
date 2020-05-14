@@ -17,9 +17,11 @@ public class JobScheduler {
         this.recentChangeProcessor = recentChangeProcessor;
     }
 
-    @Scheduled(initialDelay = 1000 * 5, fixedDelay=Long.MAX_VALUE)
+    @Scheduled(initialDelay = 1000 * 5, fixedDelay=1000)
     public void start() {
-        logger.info("Starting the recent change wiki event processor...");
-        recentChangeProcessor.start();
+        if(!recentChangeProcessor.isRunning()) {
+            logger.info("Starting the recent change wiki event processor...");
+            recentChangeProcessor.start();
+        }
     }
 }

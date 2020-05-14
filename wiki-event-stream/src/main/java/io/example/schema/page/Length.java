@@ -1,5 +1,5 @@
 
-package io.example.schema.recentchange;
+package io.example.schema.page;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,48 +14,32 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * Old and new revision IDs
+ * Length of old and new change
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "new",
-        "old"
+        "old",
+        "new"
 })
-public class Revision {
+public class Length {
 
     /**
-     * (rc_last_oldid)
-     */
-    @JsonProperty("new")
-    @JsonPropertyDescription("(rc_last_oldid)")
-    private Integer _new;
-    /**
-     * (rc_this_oldid)
+     * (rc_old_len)
      */
     @JsonProperty("old")
-    @JsonPropertyDescription("(rc_this_oldid)")
+    @JsonPropertyDescription("(rc_old_len)")
     private Integer old;
+    /**
+     * (rc_new_len)
+     */
+    @JsonProperty("new")
+    @JsonPropertyDescription("(rc_new_len)")
+    private Integer _new;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * (rc_last_oldid)
-     */
-    @JsonProperty("new")
-    public Integer getNew() {
-        return _new;
-    }
-
-    /**
-     * (rc_last_oldid)
-     */
-    @JsonProperty("new")
-    public void setNew(Integer _new) {
-        this._new = _new;
-    }
-
-    /**
-     * (rc_this_oldid)
+     * (rc_old_len)
      */
     @JsonProperty("old")
     public Integer getOld() {
@@ -63,11 +47,27 @@ public class Revision {
     }
 
     /**
-     * (rc_this_oldid)
+     * (rc_old_len)
      */
     @JsonProperty("old")
     public void setOld(Integer old) {
         this.old = old;
+    }
+
+    /**
+     * (rc_new_len)
+     */
+    @JsonProperty("new")
+    public Integer getNew() {
+        return _new;
+    }
+
+    /**
+     * (rc_new_len)
+     */
+    @JsonProperty("new")
+    public void setNew(Integer _new) {
+        this._new = _new;
     }
 
     @JsonAnyGetter
@@ -82,9 +82,9 @@ public class Revision {
 
     @Override
     public String toString() {
-        return "Revision{" +
-                "_new=" + _new +
-                ", old=" + old +
+        return "Length{" +
+                "old=" + old +
+                ", _new=" + _new +
                 ", additionalProperties=" + additionalProperties +
                 '}';
     }

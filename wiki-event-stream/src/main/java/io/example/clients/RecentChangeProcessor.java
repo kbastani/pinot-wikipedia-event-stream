@@ -1,7 +1,8 @@
 package io.example.clients;
 
 import com.google.gson.Gson;
-import io.example.schema.recentchange.RecentChange;
+import io.example.schema.category.CategoryChange;
+import io.example.schema.page.RecentChange;
 import org.fastily.jwiki.core.Wiki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxProcessor;
 import reactor.core.publisher.FluxSink;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
@@ -28,8 +30,8 @@ public class RecentChangeProcessor {
     private static Logger logger = LoggerFactory.getLogger(RecentChangeProcessor.class);
     private static final String STREAM_HOST = "https://stream.wikimedia.org";
     private static final String STREAM_URI = "/v2/stream/recentchange";
-    private FluxProcessor<RecentChange, RecentChange> categoryProcessor;
-    private FluxSink<RecentChange> categorySink;
+    private FluxProcessor<CategoryChange, CategoryChange> categoryProcessor;
+    private FluxSink<CategoryChange> categorySink;
     private final Source messageBroker;
     private boolean running = false;
     private final Gson gson = new Gson();
@@ -37,10 +39,6 @@ public class RecentChangeProcessor {
 
     public RecentChangeProcessor(Source messageBroker) {
         this.messageBroker = messageBroker;
-
-        // Initialize the join processor which will decorate recent change events with their joined category
-        this.categoryProcessor = DirectProcessor.<RecentChange>create().serialize();
-        this.categorySink = categoryProcessor.sink();
     }
 
     /**
@@ -53,17 +51,24 @@ public class RecentChangeProcessor {
         if (!running) {
             running = true;
 
+            // Initialize the join processor which will decorate recent change events with their joined category
+            this.categoryProcessor = DirectProcessor.<CategoryChange>create().serialize();
+            this.categorySink = categoryProcessor.sink();
+
             // Fetch the reactive change stream that is ready for subscription
             Flux<RecentChange> changeStream = getRecentChangeStream();
 
-            // Before initiating the subscription, specify how errors should be handled and retry with backoff
+            // When an error occurs, the stream client should re-establish the connection to the SSE API
             changeStream.onErrorResume(throwable -> getRecentChangeStream())
                     .retryBackoff(Integer.MAX_VALUE, Duration.ofMillis(300))
                     .subscribe();
 
             // Subscriptions are non-blocking, so here we start a second subscription that is listening for joins
             // that are being emitted from the first subscription, before sinking them into Kafka
-            categoryProcessor.subscribe(this::processEvent);
+            categoryProcessor.log()
+                    .doOnError(throwable -> logger.error("Error when sending events to Kafka", throwable))
+                    .retryBackoff(Integer.MAX_VALUE, Duration.ofMillis(300))
+                    .subscribe(this::processEvent);
         } else {
             throw new RuntimeException("The wiki stream replicator is already running...");
         }
@@ -82,9 +87,9 @@ public class RecentChangeProcessor {
         Flux<ServerSentEvent<String>> eventStream = getWikiStreamClient();
 
         return eventStream.map(event -> gson.fromJson(event.data(), RecentChange.class))
-                .doOnError(throwable -> logger.error("Error receiving SSE", throwable))
                 .filter(this::applyFilter)
-                .doOnNext(this::joinCategories);
+                .doOnNext(this::joinCategories)
+                .doOnError(throwable -> logger.error("Error receiving SSE", throwable));
     }
 
     /**
@@ -107,11 +112,10 @@ public class RecentChangeProcessor {
      * @param recentChange is the {@link RecentChange} that should be joined with its categories
      */
     private void joinCategories(RecentChange recentChange) {
-        wiki.getCategoriesOnPage(recentChange.getTitle()).stream().map(category -> {
-            RecentChange clonedChange = gson.fromJson(gson.toJson(recentChange), RecentChange.class);
-            clonedChange.setCategory(category);
-            return clonedChange;
-        }).parallel().forEach(categorySink::next);
+        wiki.getCategoriesOnPage(recentChange.getTitle())
+                .stream()
+                .map(category -> CategoryChange.create(recentChange, category))
+                .forEach(categorySink::next);
     }
 
     /**
@@ -119,14 +123,12 @@ public class RecentChangeProcessor {
      * Kafka topic. This Kafka topic will be subscribed to by Apache Pinot, which will ingest the rows into a
      * real-time table that can be queried using SQL.
      *
-     * @param recentChange is the {@link RecentChange} from Wikipedia joined with a category.
+     * @param categoryChange is the {@link RecentChange} from Wikipedia joined with a category.
      */
-    private void processEvent(RecentChange recentChange) {
+    private void processEvent(CategoryChange categoryChange) {
         try {
-            logger.info("Processing wiki change event: " + recentChange.toString());
-            messageBroker.output().send(MessageBuilder.withPayload(recentChange).build());
+            messageBroker.output().send(MessageBuilder.withPayload(categoryChange).build());
         } catch (Exception ex) {
-            logger.error("Error processing wiki change event", ex);
             throw new RuntimeException(ex);
         }
 

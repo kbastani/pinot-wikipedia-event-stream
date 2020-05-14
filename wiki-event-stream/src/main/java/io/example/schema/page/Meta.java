@@ -1,5 +1,5 @@
 
-package io.example.schema.recentchange;
+package io.example.schema.page;
 
 import java.util.Date;
 import java.util.HashMap;
