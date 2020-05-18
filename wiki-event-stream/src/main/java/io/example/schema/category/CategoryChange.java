@@ -141,7 +141,7 @@ public class CategoryChange {
         categoryChange.setId(recentChange.getId());
         categoryChange.setTitle(recentChange.getTitle());
         categoryChange.setCategory(category);
-        categoryChange.setChangedTime(recentChange.getTimestamp());
+        categoryChange.setChangedTime(recentChange.getMeta().getDt().toInstant().toEpochMilli());
         if (recentChange.getLength() != null)
             categoryChange.setChangeLength(Optional.ofNullable(recentChange.getLength().getOld()).orElse(0) -
                     Optional.ofNullable(recentChange.getLength().getNew()).orElse(0));
