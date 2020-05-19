@@ -1,6 +1,7 @@
 package io.example.clients;
 
 import com.google.gson.Gson;
+import io.example.schema.KafkaEvent;
 import io.example.schema.category.CategoryChange;
 import io.example.schema.page.RecentChange;
 import org.fastily.jwiki.core.Wiki;
@@ -16,17 +17,10 @@ import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxProcessor;
 import reactor.core.publisher.FluxSink;
-import reactor.core.scheduler.Schedulers;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
+import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.TimeZone;
-
-import static java.time.temporal.ChronoUnit.MILLIS;
-import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  * This processor receives Wikimedia change events that describe recent changes as they are happening live on Wikipedia.
@@ -37,7 +31,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class RecentChangeProcessor {
     private static Logger logger = LoggerFactory.getLogger(RecentChangeProcessor.class);
     private static final String STREAM_HOST = "https://stream.wikimedia.org";
-    private static final String STREAM_URI = "/v2/stream/recentchange?since=%s";
+    private static final String STREAM_URI = "/v2/stream/recentchange";
     private FluxProcessor<CategoryChange, CategoryChange> categoryProcessor;
     private FluxSink<CategoryChange> categorySink;
     private final Source messageBroker;
@@ -45,10 +39,11 @@ public class RecentChangeProcessor {
     private final Gson gson = new Gson();
     private final Wiki wiki = new Wiki.Builder().build();
     private Long offset;
+    private KafkaEvent[] lastEventId;
 
     public RecentChangeProcessor(Source messageBroker) {
         this.messageBroker = messageBroker;
-        this.offset = Duration.of(new Date().getTime(), MILLIS).minus(Duration.ofDays(1)).toMillis();
+        this.offset = new Date().toInstant().atOffset(ZoneOffset.UTC).minusDays(1).toInstant().toEpochMilli();
     }
 
     /**
@@ -97,8 +92,12 @@ public class RecentChangeProcessor {
         Flux<ServerSentEvent<String>> eventStream = getWikiStreamClient();
 
         return eventStream.onErrorResume(throwable -> getWikiStreamClient())
+                .timeout(Duration.ofMillis(5000L))
                 .retryBackoff(Integer.MAX_VALUE, Duration.ofMillis(300))
-                .map(event -> gson.fromJson(event.data(), RecentChange.class))
+                .map(event -> {
+                    lastEventId = gson.fromJson(event.id(), KafkaEvent[].class);
+                    return gson.fromJson(event.data(), RecentChange.class);
+                })
                 .filter(this::applyFilter)
                 .doOnNext(this::joinCategories)
                 .doOnError(throwable -> logger.error("Error receiving SSE", throwable));
@@ -124,7 +123,7 @@ public class RecentChangeProcessor {
      * @param recentChange is the {@link RecentChange} that should be joined with its categories
      */
     private void joinCategories(RecentChange recentChange) {
-        this.offset = recentChange.getTimestamp();
+        this.offset = recentChange.getMeta().getDt().toInstant().toEpochMilli();
         wiki.getCategoriesOnPage(recentChange.getTitle())
                 .stream()
                 .map(category -> CategoryChange.create(recentChange, category))
@@ -162,10 +161,15 @@ public class RecentChangeProcessor {
         };
 
         // Fetches a reactive stream that processes server-sent events from the Wikimedia event platform
-        return client.get()
-                .uri(String.format(STREAM_URI, offset))
-                        .retrieve()
-                        .bodyToFlux(type);
+        if(lastEventId == null) {
+            return client.get().uri(String.format(STREAM_URI + "?since=%s", offset)).retrieve()
+                    .bodyToFlux(type);
+        } else {
+            return client.get().uri(STREAM_URI)
+                    .header("Last-Event-Id", gson.toJson(lastEventId)).retrieve()
+                    .bodyToFlux(type);
+        }
+
     }
 
     public void stop() {
