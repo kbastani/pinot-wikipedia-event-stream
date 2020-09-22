@@ -33,7 +33,7 @@ After creating the schema and table, you can start querying the real-time change
 
 You can run these queries directly in the Pinot data browser.
 
-    http://localhost:9000/query
+    http://localhost:9000/#/query
 
 Copy and paste the following query in the query console and run it.
 
@@ -62,7 +62,7 @@ Now try searching for virus related articles. Make sure PQL syntax is checked be
     SELECT category, COUNT(*) as rank FROM wikiRecentChangeTable WHERE regexp_like(category, 'virus')
     GROUP BY category
     ORDER BY rank DESC
-    TOP 10
+    LIMIT 10
 
 You should see something similar to the following output.
 
@@ -85,7 +85,7 @@ Try this query to get back time series data that shows how articles related to t
     FROM wikiRecentChangeTable
     WHERE text_match(title, "pandemic")
     GROUP BY title, dateTimeConvert(changedTime, '1:MILLISECONDS:EPOCH', '1:MINUTES:SIMPLE_DATE_FORMAT:yyyy-MM-dd HH:mm:ss tz(America/Los_Angeles)', '1:MINUTES')
-    TOP 1000
+    LIMIT 1000
 
 You can download this data as CSV from the Pinot data browser and plug it into a d3js visualization that animates the query results.
 
